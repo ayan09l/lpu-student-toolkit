@@ -1,176 +1,110 @@
 import streamlit as st
-import streamlit.components.v1 as components
 
-# --- Page Configuration ---
+# Page setup
 st.set_page_config(page_title="LPU Campus Toolkit", layout="wide")
 
-# --- Sidebar ---
-st.sidebar.image("assets/logo.png", width=150)
-st.sidebar.markdown("## 👤 Student Details")
+# Sidebar
+with st.sidebar:
+    st.image("assets/logo.png", width=150)
+    st.markdown("## Student Info")
+    name = st.text_input("Name", "Ayush Panigrahi")
+    roll = st.text_input("Roll Number", "123456789")
+    section = st.text_input("Section", "K22HP")
+    
+    st.markdown("## Tools")
+    choice = st.radio("Select", [
+        "🏠 Home", "📅 Timetable", "📊 Attendance", "⏱ Study Timer",
+        "🧠 AI Study Buddy", "📈 CGPA Calculator", "🗓 Smart Study Planner"
+    ])
 
-name = st.sidebar.text_input("Enter Your Name", "Ayush Panigrahi")
-roll_no = st.sidebar.text_input("Roll Number", "123456789")
-section = st.sidebar.text_input("Section", "K22PA")
+    st.image("assets/profile.jpg", width=100)
+    st.markdown("<center><small>Made by Ayush Panigrahi</small></center>", unsafe_allow_html=True)
 
-st.sidebar.markdown("---")
-page = st.sidebar.radio("📚 Navigate", [
-    "Home",
-    "Timetable",
-    "Attendance Tracker",
-    "CGPA Calculator",
-    "AI Study Buddy 🤖",
-    "Smart Study Planner 📅",
-    "Study Timer ⏱"
-])
-
-# --- Sidebar: LPU Courses Section ---
-st.sidebar.markdown("---")
-with st.sidebar.expander("📘 LPU Courses"):
-    st.markdown("""
-    - B.Tech - CSE  
-    - B.Tech - ECE  
-    - B.Tech - Civil  
-    - B.Tech - Mechanical  
-    - BCA / MCA  
-    - BBA / MBA  
-    - B.Com / M.Com  
-    - B.Sc / M.Sc  
-    - B.A / M.A  
-    - Pharmacy  
-    - Law  
-    - Design  
-    - Architecture  
-    - Hotel Management  
-    - Journalism  
-    """)
-
-# --- Home Page ---
-if page == "Home":
-    st.markdown(f'''
-        <div style="background-color: #f3e5f5; padding: 30px; border-radius: 10px;">
-            <h2 style="color: #6a1b9a;">🌟 Welcome, <span style="color: #4a148c;">{name}</span>!</h2>
-            <p style="font-size: 17px; color: #4a148c;">
-                This is your all-in-one <b>LPU Campus Toolkit</b> designed to make your student life easier! 🧠📚<br><br>
-                Use the tools on the left sidebar to:
-                <ul>
-                    <li>🤖 Ask questions with the <b>AI Study Buddy</b></li>
-                    <li>📅 Manage your <b>Timetable</b></li>
-                    <li>📊 Track your <b>Attendance</b></li>
-                    <li>🎓 Calculate your <b>CGPA</b></li>
-                    <li>🧠 Plan using the <b>Smart Study Planner</b></li>
-                </ul>
-                Keep growing, keep shining at LPU! 💜✨
-            </p>
-        </div>
-    ''', unsafe_allow_html=True)
-
-# --- Timetable Page ---
-elif page == "Timetable":
-    st.title("📅 Timetable Manager")
-    st.info("Coming soon...")
-
-# --- Attendance Tracker Page ---
-elif page == "Attendance Tracker":
-    st.title("📊 Attendance Tracker")
-    st.info("Coming soon...")
-
-# --- CGPA Calculator Page ---
-elif page == "CGPA Calculator":
-    st.title("🎓 CGPA Calculator")
-    st.info("Coming soon...")
-
-# --- AI Study Buddy Page ---
-elif page == "AI Study Buddy 🤖":
-    st.title("🤖 AI Study Buddy")
-    openai_api_key = st.text_input("Enter your OpenAI API Key", type="password")
-    user_question = st.text_area("Ask a study question...")
-    if st.button("Get Answer"):
-        if openai_api_key and user_question:
-            try:
-                import openai
-                openai.api_key = openai_api_key
-                response = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
-                    messages=[{"role": "user", "content": user_question}]
-                )
-                st.success(response['choices'][0]['message']['content'])
-            except Exception as e:
-                st.error("❌ Failed to get response. Check your API key or question.")
-        else:
-            st.warning("Please enter both your API key and a question.")
-
-# --- Smart Study Planner Page ---
-elif page == "Smart Study Planner 📅":
-    st.title("🧠 Smart Study Planner")
-    st.info("Coming soon...")
-
-# --- Study Timer Page ---
-elif page == "Study Timer ⏱":
-    st.title("⏱ Study Timer")
-    st.info("Coming soon...")
-
-# --- Floating LPU Courses Button in Right Bottom Corner ---
-components.html("""
+# Floating LPU Courses (bottom-right)
+courses = [
+    "B.Tech CSE", "B.Tech ECE", "B.Tech ME", "MBA", "BBA", "B.Com",
+    "BCA", "MCA", "B.Sc Agri", "B.Design", "B.Pharm", "B.Arch", "BA LLB", "B.Ed", "Others"
+]
+float_html = f"""
 <style>
-.floating-button {
+#lpu-float {{
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background-color: #6a1b9a;
+    background: #f44336;
     color: white;
-    padding: 12px 18px;
+    padding: 10px 15px;
     border-radius: 10px;
-    font-size: 16px;
+    z-index: 100;
     cursor: pointer;
-    z-index: 9999;
-}
-.floating-box {
+}}
+#lpu-modal {{
     display: none;
     position: fixed;
     bottom: 70px;
     right: 20px;
-    background-color: #f5f5f5;
+    background: white;
     padding: 15px;
+    border: 2px solid #aaa;
     border-radius: 10px;
-    width: 280px;
-    z-index: 9998;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
-}
+    z-index: 101;
+}}
 </style>
-
-<div class="floating-button" onclick="toggleCourses()">📘 LPU Courses</div>
-<div class="floating-box" id="courses-box">
-    <b style="font-size: 16px;">LPU All Courses</b><br><br>
-    <ul style="padding-left: 20px;">
-        <li>B.Tech - CSE</li>
-        <li>B.Tech - ECE</li>
-        <li>B.Tech - Civil</li>
-        <li>B.Tech - Mechanical</li>
-        <li>BCA / MCA</li>
-        <li>BBA / MBA</li>
-        <li>B.Com / M.Com</li>
-        <li>B.Sc / M.Sc</li>
-        <li>B.A / M.A</li>
-        <li>Pharmacy</li>
-        <li>Law</li>
-        <li>Design</li>
-        <li>Architecture</li>
-        <li>Hotel Management</li>
-        <li>Journalism</li>
-    </ul>
+<button id="lpu-float" onclick="document.getElementById('lpu-modal').style.display='block'">LPU Courses</button>
+<div id="lpu-modal">
+<b>All Courses:</b><ul>
+{''.join([f'<li>{c}</li>' for c in courses])}
+</ul>
+<button onclick="document.getElementById('lpu-modal').style.display='none'">Close</button>
 </div>
+"""
+st.markdown(float_html, unsafe_allow_html=True)
 
-<script>
-function toggleCourses() {
-    var box = document.getElementById("courses-box");
-    box.style.display = (box.style.display === "none" || box.style.display === "") ? "block" : "none";
-}
-</script>
-""", height=0)
+# Pages
+if choice == "🏠 Home":
+    st.markdown(f"""
+    <div style='background:linear-gradient(to right,#6dd5ed,#2193b0);padding:20px;border-radius:10px;color:white'>
+        <h2>Hello, {name}! 👋</h2>
+        <p>Roll No: {roll} | Section: {section}</p>
+        <p>Welcome to the all-in-one LPU Toolkit!</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-# --- Footer ---
+elif choice == "📅 Timetable":
+    st.header("📅 Timetable")
+    st.info("Feature coming soon.")
+
+elif choice == "📊 Attendance":
+    st.header("📊 Attendance Tracker")
+    subjects = st.text_input("Subjects (comma-separated)", "AI, ML, Math")
+    for sub in subjects.split(","):
+        sub = sub.strip()
+        att = st.number_input(f"{sub} Attended", min_value=0)
+        total = st.number_input(f"{sub} Total", min_value=1)
+        if total:
+            st.write(f"📘 {sub}: {(att/total)*100:.2f}%")
+
+elif choice == "⏱ Study Timer":
+    st.header("⏱ Study Timer")
+    st.info("Coming soon!")
+
+elif choice == "🧠 AI Study Buddy":
+    st.header("🧠 Ask AI Study Buddy")
+    q = st.text_input("Ask anything:")
+    if q:
+        st.success("This is where the AI reply will come (API integration coming).")
+
+elif choice == "📈 CGPA Calculator":
+    st.header("📈 CGPA Calculator")
+    credits = st.number_input("Total Credits", min_value=1)
+    points = st.number_input("Total Grade Points")
+    if credits:
+        st.write(f"🎓 CGPA: {points/credits:.2f}")
+
+elif choice == "🗓 Smart Study Planner":
+    st.header("🗓 Smart Study Planner")
+    st.warning("Coming soon!")
+
+# Footer
 st.markdown("---")
-st.markdown(
-    "<center><small style='color: grey;'>Made by Ayush Panigrahi ❤ | LPU Campus Toolkit</small></center>",
-    unsafe_allow_html=True
-)
+st.markdown("<center><small>© 2025 | Made with ❤ by Ayush Panigrahi</small></center>", unsafe_allow_html=True)
